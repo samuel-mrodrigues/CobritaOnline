@@ -1,0 +1,16 @@
+{
+  "name": "cobritaonline",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "iniciar": "http-server ./frontend"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "http-server": "^14.1.1",
+    "nodemon": "^2.0.19"
+  }
+}
