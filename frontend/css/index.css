@@ -1,0 +1,39 @@
+body {
+    padding: 10px;
+}
+
+#jogador {
+    width: 0;
+    height: 0;
+    position: absolute
+}
+
+#jogo_area {
+    display: block;
+    position: relative;
+    border: 1px solid red;
+    height: 800px;
+    width: 100%;
+    padding: 0;
+}
+
+#cobrinha {
+    width: 50px;
+    height: 50px;
+    background-color: green;
+    position: absolute;
+}
+
+.rabo {
+    width: 50px;
+    height: 50px;
+    background-color: black;
+    position: absolute;
+}
+
+.comida {
+    background-color: red;
+    width: 10px;
+    height: 10px;
+    position: absolute;
+}
