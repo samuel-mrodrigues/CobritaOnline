@@ -5,11 +5,18 @@ import { onTeclaPressionada } from "../listeners/listeners.js";
  * Representa uma Cobrinha
  */
 export default class Cobra {
+
+    /**
+     * Elemento HTML do jogador, onde a cobra ficara dentro dele
+     * @type {HTMLElement}
+     */
+    elementoJogadorHTML;
+
     /**
      * Elemento HTML da cobra que estara no HTML
      * @type {HTMLElement}
      */
-    elementoHtml;
+    elementoCobraHTML;
 
     /**
      * Estado da movimentação da cobrinha
@@ -55,12 +62,16 @@ export default class Cobra {
     rabosElementos = []
 
     /**
-     * Inicia um novo objeto cobrinha
+     * Inicia um novo objeto cobrinha vinculado ao elemento HTML
+     * @param {HTMLElement} elementoJogador
      */
-    constructor() {
-        let elemento = criarElemento("div", { id: 'cobrinha' });
+    constructor(elementoJogador) {
+        this.elementoJogadorHTML = elementoJogador
 
-        this.elementoHtml = elemento;
+        let elemento = criarElemento("div", { id: 'cobrinha' });
+        this.elementoCobraHTML = elemento;
+        this.elementoJogadorHTML.appendChild(elemento)
+
         this.#cadastrarEventos();
     }
 
@@ -129,16 +140,16 @@ export default class Cobra {
         console.log(`Movendo cobrinha para ${this.movimentoEstado.direcaoProxima}`);
         switch (this.movimentoEstado.direcaoProxima) {
             case CONSTANTES.MOVIMENTO.CIMA:
-                novoY = novoY - this.elementoHtml.getClientRects()[0].height
+                novoY = novoY - this.elementoCobraHTML.getClientRects()[0].height
                 break;
             case CONSTANTES.MOVIMENTO.DIREITA:
-                novoX = novoX + this.elementoHtml.getClientRects()[0].width
+                novoX = novoX + this.elementoCobraHTML.getClientRects()[0].width
                 break;
             case CONSTANTES.MOVIMENTO.BAIXO:
-                novoY = novoY + this.elementoHtml.getClientRects()[0].height
+                novoY = novoY + this.elementoCobraHTML.getClientRects()[0].height
                 break;
             case CONSTANTES.MOVIMENTO.ESQUERDA:
-                novoX = novoX - this.elementoHtml.getClientRects()[0].width
+                novoX = novoX - this.elementoCobraHTML.getClientRects()[0].width
                 break;
             default:
                 break;
@@ -149,7 +160,7 @@ export default class Cobra {
         if (this.movimentoEstado.y != novoY) this.movimentoEstado.y = novoY
 
         // Move o elemento HTML no template
-        this.elementoHtml.style.transform = `translateX(${novoX}px) translateY(${this.movimentoEstado.y}px)`;
+        this.elementoCobraHTML.style.transform = `translateX(${novoX}px) translateY(${this.movimentoEstado.y}px)`;
 
         // Atualiza os movimentos antigos e novos 
         this.movimentoEstado.direcaoAntiga = this.movimentoEstado.direcaoAtual != null ? this.movimentoEstado.direcaoAtual : this.movimentoEstado.direcaoProxima
@@ -225,7 +236,7 @@ export default class Cobra {
     gerarRabo() {
         let elemento_rabo = criarElemento("div", { classes: ['rabo'] })
 
-        this.elementoHtml.insertAdjacentElement("afterend", elemento_rabo)
+        this.elementoCobraHTML.insertAdjacentElement("afterend", elemento_rabo)
 
         // Gero um rabo com a posição atual da cobra
         let posicaoRabo = {

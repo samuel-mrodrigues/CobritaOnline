@@ -1,20 +1,22 @@
 console.log('Carregando JS inicial da pagina');
 
 import { cadastrarListeners } from "./listeners/listeners.js";
-import Cobrinha from "./cobrinha/cobrinha.js"
 import { CONSTANTES, criarElemento } from "../utils/utils.js"
 
-/**
- * Representa a DIV onde a cobra se movimenta
- * @type {HTMLElement}
- */
-var jogoArea;
+import Cobrinha from "./cobrinha/cobrinha.js"
+import Arena from "./arena/arena.js";
 
 /**
- * Representa DIV onde o elemento da cobra do jogador estara, incluindo a cobra e seus rabos
- * @type {HTMLElement}
+ * Representa a arena onde a cobrinha irá se mexer
+ * @type {Arena}
  */
-var jogadorElemento;
+var jogoArena;
+
+/**
+ * Representa a cobrinha do jogador
+ * @type {Cobrinha}
+ */
+var jogadorCobrinha = null
 
 /**
  * Contem informações uteis sobre o estado do jogo
@@ -24,11 +26,6 @@ var estadoJogo = {
     velocidadeCobra: CONSTANTES.JOGO.VELOCIDADE_INICIAL
 }
 
-/**
- * Representa a cobrinha do jogador
- * @type {Cobrinha}
- */
-var jogadorCobrinha = null
 
 /**
  * Lista de comidas existentes na arena
@@ -53,8 +50,8 @@ function inicio() {
         gerarComida();
     };
 
-    jogoArea = document.getElementById("jogo_area");
-    jogadorElemento = document.getElementById("jogador")
+    let jogoArea = document.getElementById("jogo_area");
+    jogoArena = new Arena(jogoArea);
 
     // Realiza o cadastro dos listeners de evento da pagina
     cadastrarListeners()
@@ -66,12 +63,13 @@ function inicio() {
 function iniciarJogo() {
     avisoEstadoJogo(`Iniciando jogo`)
 
-    let cobrinha = new Cobrinha();
+    let elementoJogador = document.getElementById("jogador")
+    let cobrinha = new Cobrinha(elementoJogador);
     jogadorCobrinha = cobrinha;
-    jogadorElemento.append(jogadorCobrinha.elementoHtml);
 
     // Variavel que mostra quando o proximo movimento da cobrinha estará disponivel
     let proximoMovimentoCobra = 0;
+
     // Inicia o loop
     estadoJogo.loopTaskid = setInterval(() => {
 
@@ -97,7 +95,7 @@ function iniciarJogo() {
  */
 function checarColisaoComida() {
     let cobrinha = jogadorCobrinha
-    let cobrinhaPosicao = jogadorCobrinha.elementoHtml.getClientRects()[0];
+    let cobrinhaPosicao = jogadorCobrinha.elementoCobraHTML.getClientRects()[0];
 
     // Verifica se o jogador passou em cima de alguma comidinha
     for (const comida of comidas) {
@@ -127,8 +125,8 @@ function checarColisaoComida() {
 function moverCobrinha() {
 
     let cobrinha = jogadorCobrinha;
-    let arenaPosicao = jogoArea.getClientRects()[0];
-    let cobrinhaPosicao = jogadorCobrinha.elementoHtml.getClientRects()[0];
+    let arenaPosicao = jogoArena.elementoHTML.getClientRects()[0];
+    let cobrinhaPosicao = jogadorCobrinha.elementoCobraHTML.getClientRects()[0];
 
     let direcaoAtual = jogadorCobrinha.movimentoEstado.direcaoProxima
     let podeMover = false;
@@ -172,13 +170,13 @@ function moverCobrinha() {
 function gerarComida() {
     console.log(`Gerando uma comida...`);
 
-    let arenaBoundaries = jogoArea.getClientRects()[0]
+    let arenaBoundaries = jogoArena.elementoHTML.getClientRects()[0]
 
     let widthRandom = Math.random() * arenaBoundaries.width
     let heigthRandom = Math.random() * arenaBoundaries.height
 
     let comidaElemento = criarElemento("div", { classes: ['comida'] })
-    jogoArea.appendChild(comidaElemento)
+    jogoArena.elementoHTML.appendChild(comidaElemento)
 
     if (widthRandom + comidaElemento.getClientRects()[0].width > arenaBoundaries.width) widthRandom = arenaBoundaries.width - comidaElemento.getClientRects()[0].width
     if (heigthRandom + comidaElemento.getClientRects()[0].height > arenaBoundaries.height) heigthRandom = arenaBoundaries.height - comidaElemento.getClientRects()[0].height
